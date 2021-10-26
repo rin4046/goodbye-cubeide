@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "STM32 Debug",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "Debug/${workspaceFolderBasename}.elf",
+      "preLaunchTask": "${defaultBuildTask}",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "stlink"
+    }
+  ]
+}

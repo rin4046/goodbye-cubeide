@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "STM32 Build",
+      "type": "shell",
+      "command": "make",
+      "args": ["--directory=${workspaceFolder}/Debug", "--jobs=7", "all"],
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
