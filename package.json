@@ -16,7 +16,7 @@
   "engines": {
     "vscode": "^1.61.0"
   },
-  "main": "./out/main.js",
+  "main": "./out/extension.js",
   "extensionDependencies": [
     "ms-vscode.cpptools",
     "marus25.cortex-debug"
@@ -54,7 +54,7 @@
     "vscode:prepublish": "npm run compile",
     "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=./out/extension.js --external:vscode --external:canvas --format=cjs --platform=node",
     "compile": "npm run esbuild-base -- --minify",
-    "watch": "npm run esbuild-base -- --sourcemap --watch",
+    "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
