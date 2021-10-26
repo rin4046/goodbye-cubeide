@@ -37,19 +37,24 @@ export const refresh = (context: vscode.ExtensionContext) => {
           args.push('-data', cubeIdeWorkspacePath);
         }
 
-        const headlessBuild = spawn(cubeIdePath, args);
-        headlessBuild.stdout.on('data', (data) => {
-          output.append(data.toString());
-        });
-        headlessBuild.stderr.on('data', (data) => {
-          output.append(data.toString());
-        });
-
-        await (() => {
-          return new Promise((resolve) => {
-            headlessBuild.stdout.on('end', resolve);
+        try {
+          const headlessBuild = spawn(cubeIdePath, args);
+          headlessBuild.stdout.on('data', (data) => {
+            output.append(data.toString());
           });
-        })();
+          headlessBuild.stderr.on('data', (data) => {
+            output.append(data.toString());
+          });
+
+          await (() => {
+            return new Promise((resolve) => {
+              headlessBuild.stdout.on('end', resolve);
+            });
+          })();
+        } catch (e: any) {
+          vscode.window.showErrorMessage(e.message);
+        }
+
         context.workspaceState.update('isCubeIdeRunning', false);
       }
     });
