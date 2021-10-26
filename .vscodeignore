@@ -12,3 +12,4 @@ vsc-extension-quickstart.md
 **/*.ts
 
 node_modules
+patches
