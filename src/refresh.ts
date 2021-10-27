@@ -19,44 +19,42 @@ export const refresh = (context: vscode.ExtensionContext) => {
       progress.report({ message: 'Refreshing and building the project...' });
 
       const cubeIdePath = vscode.workspace.getConfiguration('goodbye-cubeide', rel.workspace()).get('cubeIdePath');
-      if (typeof cubeIdePath === 'string') {
-        context.workspaceState.update('isCubeIdeRunning', true);
-
-        const args = [
-          '-nosplash',
-          '-application',
-          'org.eclipse.cdt.managedbuilder.core.headlessbuild',
-          '-cleanBuild',
-          vscode.workspace.getWorkspaceFolder(rel.workspace())!.name,
-        ];
-
-        const cubeIdeWorkspacePath = vscode.workspace
-          .getConfiguration('goodbye-cubeide', rel.workspace())
-          .get('cubeIdeWorkspacePath');
-        if (cubeIdeWorkspacePath && typeof cubeIdeWorkspacePath === 'string') {
-          args.push('-data', cubeIdeWorkspacePath);
-        }
-
-        try {
-          const headlessBuild = spawn(cubeIdePath, args);
-          headlessBuild.stdout.on('data', (data) => {
-            output.append(data.toString());
-          });
-          headlessBuild.stderr.on('data', (data) => {
-            output.append(data.toString());
-          });
-
-          await (() => {
-            return new Promise((resolve) => {
-              headlessBuild.stdout.on('end', resolve);
-            });
-          })();
-        } catch (e: any) {
-          vscode.window.showErrorMessage(e.message);
-        }
-
-        context.workspaceState.update('isCubeIdeRunning', false);
+      if (typeof cubeIdePath !== 'string') {
+        return;
       }
+
+      context.workspaceState.update('isCubeIdeRunning', true);
+
+      const args = [
+        '-nosplash',
+        '-application',
+        'org.eclipse.cdt.managedbuilder.core.headlessbuild',
+        '-cleanBuild',
+        vscode.workspace.getWorkspaceFolder(rel.workspace())!.name,
+      ];
+
+      const cubeIdeWorkspacePath = vscode.workspace
+        .getConfiguration('goodbye-cubeide', rel.workspace())
+        .get('cubeIdeWorkspacePath');
+      if (cubeIdeWorkspacePath && typeof cubeIdeWorkspacePath === 'string') {
+        args.push('-data', cubeIdeWorkspacePath);
+      }
+
+      const headlessBuild = spawn(cubeIdePath, args);
+      headlessBuild.stdout.on('data', (data) => {
+        output.append(data.toString());
+      });
+      headlessBuild.stderr.on('data', (data) => {
+        output.append(data.toString());
+      });
+      headlessBuild.on('error', (e) => {
+        vscode.window.showErrorMessage(e.message);
+      });
+      await new Promise((resolve) => {
+        headlessBuild.stdout.on('end', resolve);
+      });
+
+      context.workspaceState.update('isCubeIdeRunning', false);
     });
   };
 };

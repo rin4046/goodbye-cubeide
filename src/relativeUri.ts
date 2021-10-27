@@ -12,9 +12,7 @@ export class RelativeUri {
     const rel = new RelativeUri(context);
     rel.#context = context;
 
-    if (vscode.window.activeTextEditor) {
-      rel.#uri = vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)?.uri;
-    } else if (vscode.workspace.workspaceFolders) {
+    if (vscode.workspace.workspaceFolders) {
       if (vscode.workspace.workspaceFolders.length === 1) {
         rel.#uri = vscode.workspace.workspaceFolders[0].uri;
       } else {
