@@ -8,6 +8,9 @@ export class Utils {
     if (typeof config !== 'string') {
       throw new Error(`"goodbye-cubeide.${key}" is invalid.`);
     }
+    if (key === 'cubeIdePath' && !config) {
+      throw new Error(`"goodbye-cubeide.${key}" is not defined.`);
+    }
 
     return config;
   }

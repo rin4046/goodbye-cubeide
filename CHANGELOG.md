@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.6] - 2021-10-29
+
+- Fixed error handling
+
 ## [0.0.5] - 2021-10-29
 
 - Fixed error handling
