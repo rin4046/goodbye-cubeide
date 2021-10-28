@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.4] - 2021-10-29
+
+- Added some features
+
 ## [0.0.3] - 2021-10-26
 
 - Fixed error handling

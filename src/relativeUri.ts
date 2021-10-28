@@ -26,9 +26,8 @@ export class RelativeUri {
   workspace(base = '') {
     if (this.#uri) {
       return vscode.Uri.joinPath(this.#uri, base);
-    } else {
-      throw new Error("Couldn't find your workspace folder");
     }
+    throw new Error("Couldn't find your workspace folder.");
   }
 
   extension(base = '') {

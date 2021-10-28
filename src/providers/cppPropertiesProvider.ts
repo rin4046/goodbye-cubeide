@@ -1,18 +1,23 @@
 import { JSDOM } from 'jsdom';
+import path = require('path');
+import { Utils } from '../utils';
 
-export class CppPropertiesGenerator {
-  #configuration: Element;
+export class CppPropertiesProvider {
+  #configuration;
+  json;
 
-  constructor(xml: Buffer) {
-    this.#configuration = new JSDOM(xml, { contentType: 'text/xml' }).window.document.querySelector(
+  constructor(xml: Uint8Array) {
+    const utils = new Utils();
+
+    this.#configuration = new JSDOM(Buffer.from(xml), { contentType: 'text/xml' }).window.document.querySelector(
       'cproject \
 > storageModule[moduleId="org.eclipse.cdt.core.settings"] \
 > cconfiguration[id^="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug."]'
     )!;
-  }
 
-  getJson() {
-    return new TextEncoder().encode(
+    const ext = process.platform === 'win32' ? '.exe' : '';
+
+    this.json = new TextEncoder().encode(
       JSON.stringify(
         {
           configurations: [
@@ -20,8 +25,9 @@ export class CppPropertiesGenerator {
               name: 'STM32',
               includePath: this.#getIncludes(),
               defines: this.#getDefinitions(),
-              cStandard: 'gnu17',
-              cppStandard: 'gnu++20',
+              compilerPath: path.join(utils.gccPath(), `arm-none-eabi-g++${ext}`),
+              cStandard: utils.getConfig('cStandard'),
+              cppStandard: utils.getConfig('cppStandard'),
               intelliSenseMode: '${default}',
             },
           ],

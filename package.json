@@ -1,7 +1,7 @@
 {
   "name": "goodbye-cubeide",
   "displayName": "Goodbye CubeIDE",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "preview": true,
   "description": "An extension for people who don't like CubeIDE.",
   "categories": [
@@ -23,7 +23,9 @@
   ],
   "activationEvents": [
     "onCommand:goodbye-cubeide.initialize",
-    "onCommand:goodbye-cubeide.refresh"
+    "onCommand:goodbye-cubeide.generate",
+    "onCommand:goodbye-cubeide.refresh",
+    "onCommand:workbench.action.tasks.runTask"
   ],
   "contributes": {
     "commands": [
@@ -32,8 +34,25 @@
         "title": "Goodbye CubeIDE: Initialize Project"
       },
       {
+        "command": "goodbye-cubeide.generate",
+        "title": "Goodbye CubeIDE: Generate \"c_cpp_properties.json\""
+      },
+      {
         "command": "goodbye-cubeide.refresh",
         "title": "Goodbye CubeIDE: Refresh and Build Project"
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "cubeide-make",
+        "required": [
+          "args"
+        ],
+        "properties": {
+          "args": {
+            "type": "array"
+          }
+        }
       }
     ],
     "configuration": {
@@ -46,6 +65,14 @@
         "goodbye-cubeide.cubeIdeWorkspacePath": {
           "type": "string",
           "default": ""
+        },
+        "goodbye-cubeide.cStandard": {
+          "type": "string",
+          "default": "gnu11"
+        },
+        "goodbye-cubeide.cppStandard": {
+          "type": "string",
+          "default": "gnu++14"
         }
       }
     }
@@ -70,7 +97,6 @@
     "@typescript-eslint/parser": "^4.26.0",
     "esbuild": "^0.13.9",
     "eslint": "^7.27.0",
-    "glob": "^7.1.7",
     "mocha": "^8.4.0",
     "patch-package": "^6.4.7",
     "typescript": "^4.3.2",

@@ -3,14 +3,17 @@
   "tasks": [
     {
       "label": "STM32 Build",
-      "type": "shell",
-      "command": "make",
+      "type": "cubeide-make",
       "args": ["--directory=${workspaceFolder}/Debug", "--jobs=7", "all"],
-      "problemMatcher": ["$gcc"],
       "group": {
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "STM32 Clean",
+      "type": "cubeide-make",
+      "args": ["--directory=${workspaceFolder}/Debug", "--jobs=7", "clean"]
     }
   ]
 }
