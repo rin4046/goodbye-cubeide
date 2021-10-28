@@ -16,10 +16,10 @@ export const initialize = (context: vscode.ExtensionContext) => {
       return;
     }
 
-    try {
-      vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
-        progress.report({ message: 'Initializing the project...' });
+    vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
+      progress.report({ message: 'Initializing the project...' });
 
+      try {
         for (const file of ['.vscode', '.gitignore']) {
           await fs.copy(rel.extension(`templates/${file}`), rel.workspace(file), {
             overwrite: true,
@@ -27,9 +27,9 @@ export const initialize = (context: vscode.ExtensionContext) => {
         }
 
         await vscode.commands.executeCommand('goodbye-cubeide.generate');
-      });
-    } catch (e: any) {
-      vscode.window.showErrorMessage(e.message);
-    }
+      } catch (e: any) {
+        vscode.window.showErrorMessage(e.message);
+      }
+    });
   };
 };

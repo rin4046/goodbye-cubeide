@@ -27,9 +27,9 @@ export class Utils {
   }
 
   #pluginsDir() {
-    return (() => {
-      const cubeIdePath = this.getConfig('cubeIdePath');
+    const cubeIdePath = this.getConfig('cubeIdePath');
 
+    return (() => {
       switch (process.platform) {
         case 'win32':
           return path.resolve(cubeIdePath, '../plugins');

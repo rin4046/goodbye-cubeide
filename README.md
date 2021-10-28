@@ -9,7 +9,7 @@ An extension for people who don't like CubeIDE.
 
 ## Settings
 
-- `goodbye-cubeide.cubeIdePath`: required
+- `goodbye-cubeide.cubeIdePath`: Required
 - `goodbye-cubeide.cubeIdeWorkspacePath`
 - `goodbye-cubeide.cStandard`
 - `goodbye-cubeide.cppStandard`
