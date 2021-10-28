@@ -11,5 +11,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 
-node_modules
-patches
+node_modules/
+patches/
+out/
+!out/extension.js
