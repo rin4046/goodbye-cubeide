@@ -35,10 +35,10 @@ export class Utils {
     return (() => {
       switch (process.platform) {
         case 'win32':
+        case 'linux':
           return path.resolve(cubeIdePath, '../plugins');
         case 'darwin':
           return path.resolve(cubeIdePath, '../../Eclipse/plugins');
-        case 'linux':
       }
     })();
   }
