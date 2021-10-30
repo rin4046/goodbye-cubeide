@@ -8,8 +8,11 @@
       "executable": "Debug/${workspaceFolderBasename}.elf",
       "preLaunchTask": "${defaultBuildTask}",
       "type": "cortex-debug",
+      "armToolchainPath": "${command:goodbye-cubeide.toolchainPath}",
       "runToEntryPoint": "main",
-      "servertype": "stlink"
+      "servertype": "stlink",
+      "serverpath": "${command:goodbye-cubeide.stlinkPath}",
+      "stm32cubeprogrammer": "${command:goodbye-cubeide.cubeProgPath}"
     }
   ]
 }

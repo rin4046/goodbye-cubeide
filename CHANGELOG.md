@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.0.8] - 2021-10-31
+
+- Iroiro naoshita tsukaretayo
+
 ## [0.0.7] - 2021-10-29
 
 - Added Linux support

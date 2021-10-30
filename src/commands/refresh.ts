@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
-import { RelativeUri } from '../relativeUri';
 import { Utils } from '../utils';
 
 export const refresh = (context: vscode.ExtensionContext) => {
+  const utils = new Utils();
+
   return async () => {
-    const rel = await RelativeUri.init(context);
-    const utils = new Utils();
+    await utils.setWorkspace();
 
     if (context.workspaceState.get('isCubeIdeRunning')) {
       vscode.window.showErrorMessage('CubeIDE is already running.');
@@ -23,6 +23,7 @@ export const refresh = (context: vscode.ExtensionContext) => {
 
       try {
         const cubeIdeWorkspacePath = utils.getConfig('cubeIdeWorkspacePath');
+
         const args = (() => {
           if (cubeIdeWorkspacePath) {
             return ['-data', cubeIdeWorkspacePath];
@@ -35,7 +36,7 @@ export const refresh = (context: vscode.ExtensionContext) => {
           '-application',
           'org.eclipse.cdt.managedbuilder.core.headlessbuild',
           '-cleanBuild',
-          vscode.workspace.getWorkspaceFolder(rel.workspace())!.name,
+          vscode.workspace.getWorkspaceFolder(utils.workspaceUri())!.name,
           ...args,
         ]);
 
@@ -54,9 +55,9 @@ export const refresh = (context: vscode.ExtensionContext) => {
         });
       } catch (e: any) {
         vscode.window.showErrorMessage(e.message);
-      } finally {
-        context.workspaceState.update('isCubeIdeRunning', false);
       }
+
+      context.workspaceState.update('isCubeIdeRunning', false);
     });
   };
 };

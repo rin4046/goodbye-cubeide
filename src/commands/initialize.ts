@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
-import { RelativeUri } from '../relativeUri';
+import { Utils } from '../utils';
 
 export const initialize = (context: vscode.ExtensionContext) => {
+  const fs = vscode.workspace.fs;
+  const utils = new Utils();
+
   return async () => {
-    const fs = vscode.workspace.fs;
-    const rel = await RelativeUri.init(context);
+    await utils.setWorkspace();
 
     if (
       (await vscode.window.showInformationMessage(
@@ -21,11 +23,10 @@ export const initialize = (context: vscode.ExtensionContext) => {
 
       try {
         for (const file of ['.vscode', '.gitignore']) {
-          await fs.copy(rel.extension(`templates/${file}`), rel.workspace(file), {
+          await fs.copy(utils.extensionUri(context, `assets/${file}`), utils.workspaceUri(file), {
             overwrite: true,
           });
         }
-
         await vscode.commands.executeCommand('goodbye-cubeide.generate');
       } catch (e: any) {
         vscode.window.showErrorMessage(e.message);

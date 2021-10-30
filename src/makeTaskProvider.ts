@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Utils } from '../utils';
+import { Utils } from './utils';
 
 export class MakeTaskProvider implements vscode.TaskProvider {
   provideTasks() {
@@ -8,6 +8,10 @@ export class MakeTaskProvider implements vscode.TaskProvider {
 
   resolveTask(task: vscode.Task) {
     const utils = new Utils();
+
+    const makePath = utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.make.*/tools/bin/');
+    const gccPath = utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin');
+
     const sep = process.platform === 'win32' ? ';' : ':';
 
     return new vscode.Task(
@@ -17,7 +21,7 @@ export class MakeTaskProvider implements vscode.TaskProvider {
       task.definition.type,
       new vscode.ShellExecution('make', task.definition.args, {
         env: {
-          PATH: `${utils.makePath()}${sep}${utils.gccPath()}${sep}${process.env.PATH}`, // eslint-disable-line
+          PATH: `${makePath}${sep}${gccPath}${sep}${process.env.PATH}`, // eslint-disable-line
         },
       })
     );
