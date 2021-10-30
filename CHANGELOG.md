@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.1.0] - 2021-10-31
+
+- Refactored
+
 ## [0.0.8] - 2021-10-31
 
 - Iroiro naoshita tsukaretayo

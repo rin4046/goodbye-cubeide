@@ -27,6 +27,7 @@ export const initialize = (context: vscode.ExtensionContext) => {
             overwrite: true,
           });
         }
+
         await vscode.commands.executeCommand('goodbye-cubeide.generate');
       } catch (e: any) {
         vscode.window.showErrorMessage(e.message);

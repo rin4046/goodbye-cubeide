@@ -13,7 +13,9 @@ export const generate = () => {
       progress.report({ message: 'Generating "c_cpp_properties.json"...' });
 
       try {
-        const cppConfiguration = new JSDOM(Buffer.from(await fs.readFile(utils.workspaceUri('.cproject'))), {
+        const xml = await fs.readFile(utils.workspaceUri('.cproject'));
+
+        const cppConfiguration = new JSDOM(Buffer.from(xml), {
           contentType: 'text/xml',
         }).window.document.querySelector(
           'cproject ' +
@@ -21,7 +23,7 @@ export const generate = () => {
             '> cconfiguration[id^="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug."]'
         )!;
 
-        const getIncludes = (() => {
+        const getIncludes = () => {
           const res = [];
           for (const item of [
             'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths',
@@ -38,9 +40,9 @@ export const generate = () => {
             }
           }
           return res.filter((val, i, arr) => arr.indexOf(val) === i);
-        })();
+        };
 
-        const getDefinitions = (() => {
+        const getDefinitions = () => {
           const res = [];
           for (const item of [
             'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols',
@@ -51,7 +53,7 @@ export const generate = () => {
             }
           }
           return res.filter((val, i, arr) => arr.indexOf(val) === i);
-        })();
+        };
 
         const json = new TextEncoder().encode(
           JSON.stringify(
@@ -59,8 +61,8 @@ export const generate = () => {
               configurations: [
                 {
                   name: 'STM32',
-                  includePath: getIncludes,
-                  defines: getDefinitions,
+                  includePath: getIncludes(),
+                  defines: getDefinitions(),
                   compilerPath: utils.getToolPath(
                     'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin/arm-none-eabi-gcc?(.exe)'
                   ),

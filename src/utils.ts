@@ -8,12 +8,10 @@ export class Utils {
 
   constructor() {
     const cubeIdePath = this.getConfig('cubeIdePath');
-    switch (process.platform) {
-      case 'win32':
-      case 'linux':
-        this.#pluginsDir = path.resolve(cubeIdePath, '../plugins');
-      case 'darwin':
-        this.#pluginsDir = path.resolve(cubeIdePath, '../../Eclipse/plugins');
+    if (process.platform === 'darwin') {
+      this.#pluginsDir = path.resolve(cubeIdePath, '../../Eclipse/plugins');
+    } else {
+      this.#pluginsDir = path.resolve(cubeIdePath, '../plugins');
     }
   }
 
@@ -42,14 +40,14 @@ export class Utils {
     })[0];
   }
 
-  extensionUri(context: vscode.ExtensionContext, base = '') {
-    return vscode.Uri.joinPath(context.extensionUri, base);
-  }
-
   workspaceUri(base = '') {
     if (this.#workspaceUri) {
       return vscode.Uri.joinPath(this.#workspaceUri, base);
     }
     throw new Error("Couldn't find your workspace folder.");
+  }
+
+  extensionUri(context: vscode.ExtensionContext, base = '') {
+    return vscode.Uri.joinPath(context.extensionUri, base);
   }
 }

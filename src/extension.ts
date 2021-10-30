@@ -20,12 +20,6 @@ export const activate = (context: vscode.ExtensionContext) => {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('goodbye-cubeide.cubeProgPath', () =>
-      utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.*/tools/bin')
-    )
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand('goodbye-cubeide.stlinkPath', () => {
       if (process.platform === 'win32') {
         return utils.getToolPath(
@@ -34,5 +28,11 @@ export const activate = (context: vscode.ExtensionContext) => {
       }
       return utils.extensionUri(context, 'assets/stlink.sh').fsPath;
     })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('goodbye-cubeide.cubeProgPath', () =>
+      utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.*/tools/bin')
+    )
   );
 };
