@@ -3,9 +3,8 @@ import { spawn } from 'child_process';
 import { Utils } from '../utils';
 
 export const refresh = (context: vscode.ExtensionContext) => {
-  const utils = new Utils();
-
   return async () => {
+    const utils = new Utils();
     await utils.setWorkspace();
 
     if (context.workspaceState.get('isCubeIdeRunning')) {

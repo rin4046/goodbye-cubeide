@@ -2,10 +2,9 @@ import * as vscode from 'vscode';
 import { Utils } from '../utils';
 
 export const initialize = (context: vscode.ExtensionContext) => {
-  const fs = vscode.workspace.fs;
-  const utils = new Utils();
-
   return async () => {
+    const fs = vscode.workspace.fs;
+    const utils = new Utils();
     await utils.setWorkspace();
 
     if (

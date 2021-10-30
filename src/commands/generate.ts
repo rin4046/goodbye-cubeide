@@ -3,10 +3,9 @@ import { JSDOM } from 'jsdom';
 import { Utils } from '../utils';
 
 export const generate = () => {
-  const fs = vscode.workspace.fs;
-  const utils = new Utils();
-
   return async () => {
+    const fs = vscode.workspace.fs;
+    const utils = new Utils();
     await utils.setWorkspace();
 
     vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {

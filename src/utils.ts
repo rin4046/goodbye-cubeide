@@ -34,10 +34,14 @@ export class Utils {
   }
 
   getToolPath(pattern: string) {
-    return glob.sync(pattern, {
+    const toolPath = glob.sync(pattern, {
       cwd: this.#pluginsDir,
       absolute: true,
-    })[0];
+    });
+    if (toolPath.length === 0) {
+      throw new Error("Couldn't get the tool path.");
+    }
+    return toolPath[0];
   }
 
   workspaceUri(base = '') {
