@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Utils } from './utils';
+import { getToolPath } from './utils/utils';
 
 export class MakeTaskProvider implements vscode.TaskProvider {
   provideTasks() {
@@ -7,11 +7,8 @@ export class MakeTaskProvider implements vscode.TaskProvider {
   }
 
   resolveTask(task: vscode.Task) {
-    const utils = new Utils();
-
-    const makePath = utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.make.*/tools/bin/');
-    const gccPath = utils.getToolPath('com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin');
-
+    const makePath = getToolPath('com.st.stm32cube.ide.mcu.externaltools.make.*/tools/bin/');
+    const gccPath = getToolPath('com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin');
     const sep = process.platform === 'win32' ? ';' : ':';
 
     return new vscode.Task(

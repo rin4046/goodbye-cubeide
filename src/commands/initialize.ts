@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { Utils } from '../utils';
+import { RelativeUri } from '../utils/relativeUri';
+import { fs } from '../utils/utils';
 
 export const initialize = (context: vscode.ExtensionContext) => {
   return async () => {
-    const fs = vscode.workspace.fs;
-    const utils = new Utils();
-    await utils.setWorkspace();
+    const workspace = await RelativeUri.workspace();
+    const extension = new RelativeUri(context.extensionUri);
 
     if (
       (await vscode.window.showInformationMessage(
@@ -22,7 +22,7 @@ export const initialize = (context: vscode.ExtensionContext) => {
 
       try {
         for (const file of ['.vscode', '.gitignore']) {
-          await fs.copy(utils.extensionUri(context, `assets/${file}`), utils.workspaceUri(file), {
+          await fs.copy(extension.join(`assets/${file}`), workspace.join(file), {
             overwrite: true,
           });
         }

@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
-import { Utils } from '../utils';
+import { RelativeUri } from '../utils/relativeUri';
+import { getConfig } from '../utils/utils';
 
 export const refresh = (context: vscode.ExtensionContext) => {
   return async () => {
-    const utils = new Utils();
-    await utils.setWorkspace();
+    const workspace = await RelativeUri.workspace();
 
     if (context.workspaceState.get('isCubeIdeRunning')) {
       vscode.window.showErrorMessage('CubeIDE is already running.');
@@ -21,7 +21,7 @@ export const refresh = (context: vscode.ExtensionContext) => {
       context.workspaceState.update('isCubeIdeRunning', true);
 
       try {
-        const cubeIdeWorkspacePath = utils.getConfig('cubeIdeWorkspacePath');
+        const cubeIdeWorkspacePath = getConfig<string>('cubeIdeWorkspacePath');
 
         const args = (() => {
           if (cubeIdeWorkspacePath) {
@@ -30,12 +30,12 @@ export const refresh = (context: vscode.ExtensionContext) => {
           return [];
         })();
 
-        const headlessBuild = spawn(utils.getConfig('cubeIdePath'), [
+        const headlessBuild = spawn(getConfig<string>('cubeIdePath'), [
           '-nosplash',
           '-application',
           'org.eclipse.cdt.managedbuilder.core.headlessbuild',
           '-cleanBuild',
-          vscode.workspace.getWorkspaceFolder(utils.workspaceUri())!.name,
+          workspace.name,
           ...args,
         ]);
 

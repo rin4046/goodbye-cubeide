@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "STM32 Debug",
-      "request": "launch",
       "type": "cortex-debug",
+      "request": "launch",
       "cwd": "${workspaceFolder}",
       "executable": "./Debug/${workspaceFolderBasename}.elf",
       "armToolchainPath": "${command:goodbye-cubeide.toolchainPath}",

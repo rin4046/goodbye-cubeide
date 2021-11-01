@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { Utils } from './utils';
 import { initialize } from './commands/initialize';
 import { generate } from './commands/generate';
 import { refresh } from './commands/refresh';
 import { MakeTaskProvider } from './makeTaskProvider';
+import { RelativeUri } from './utils/relativeUri';
+import { getToolPath } from './utils/utils';
 
 export const activate = (context: vscode.ExtensionContext) => {
   context.workspaceState.update('isCubeIdeRunning', false);
@@ -14,24 +15,25 @@ export const activate = (context: vscode.ExtensionContext) => {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('goodbye-cubeide.toolchainPath', () => {
-      return new Utils().getToolPath('com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin');
+      return getToolPath('com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin');
     })
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('goodbye-cubeide.stlinkPath', () => {
+      const extension = new RelativeUri(context.extensionUri);
       if (process.platform === 'win32') {
-        return new Utils().getToolPath(
+        return getToolPath(
           'com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.*/tools/bin/ST-LINK_gdbserver.exe'
         );
       }
-      return new Utils().extensionUri(context, 'assets/stlink.sh').fsPath;
+      return extension.join('assets/stlink.sh').fsPath;
     })
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('goodbye-cubeide.cubeProgPath', () => {
-      return new Utils().getToolPath('com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.*/tools/bin');
+      return getToolPath('com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.*/tools/bin');
     })
   );
 };
