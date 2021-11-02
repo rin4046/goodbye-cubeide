@@ -19,6 +19,7 @@ export const initialize = (context: vscode.ExtensionContext) => {
         }
 
         const workspace = await RelativeUri.workspace();
+        context.workspaceState.update('workspace', workspace);
         const extension = new RelativeUri(context.extensionUri);
 
         progress.report({ message: 'Initializing the project...' });
@@ -28,11 +29,11 @@ export const initialize = (context: vscode.ExtensionContext) => {
             overwrite: true,
           });
         }
-
-        await vscode.commands.executeCommand('goodbye-cubeide.generate');
       } catch (e: any) {
         vscode.window.showErrorMessage(e.message);
       }
+
+      vscode.commands.executeCommand('goodbye-cubeide.generate');
     });
   };
 };
