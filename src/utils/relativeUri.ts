@@ -5,7 +5,7 @@ export class RelativeUri {
   uri: vscode.Uri;
   name: string;
 
-  static async workspace(): Promise<RelativeUri> {
+  static async workspace() {
     const workspaceFolder = await (async () => {
       if (vscode.workspace.workspaceFolders) {
         if (vscode.workspace.workspaceFolders.length === 1) {
@@ -26,7 +26,7 @@ export class RelativeUri {
     this.name = Utils.basename(uri);
   }
 
-  join(...paths: string[]): vscode.Uri {
+  join(...paths: string[]) {
     return vscode.Uri.joinPath(this.uri, ...paths);
   }
 }

@@ -21,23 +21,24 @@ export const refresh = (context: vscode.ExtensionContext) => {
       context.workspaceState.update('isCubeIdeRunning', true);
 
       try {
+        const cubeIdePath = getConfig<string>('cubeIdePath');
+        if (!cubeIdePath) {
+          throw new Error('"goodbye-cubeide.cubeIdePath" is undefined.');
+        }
         const cubeIdeWorkspacePath = getConfig<string>('cubeIdeWorkspacePath');
 
-        const args = (() => {
-          if (cubeIdeWorkspacePath) {
-            return ['-data', cubeIdeWorkspacePath];
-          }
-          return [];
-        })();
-
-        const headlessBuild = spawn(getConfig<string>('cubeIdePath'), [
+        const args = [
           '-nosplash',
           '-application',
           'org.eclipse.cdt.managedbuilder.core.headlessbuild',
           '-cleanBuild',
           workspace.name,
-          ...args,
-        ]);
+        ];
+        if (cubeIdeWorkspacePath) {
+          args.push('-data', cubeIdeWorkspacePath);
+        }
+
+        const headlessBuild = spawn(cubeIdePath, args);
 
         headlessBuild.stdout.on('data', (data) => {
           output.append(data.toString());

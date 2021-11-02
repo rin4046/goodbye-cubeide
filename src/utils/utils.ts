@@ -5,17 +5,18 @@ import * as glob from 'glob';
 export const fs = vscode.workspace.fs;
 
 export const getConfig = <T>(key: string) => {
-  const config = vscode.workspace.getConfiguration('goodbye-cubeide').get<T>(key);
-  if (!config) {
-    throw new Error(`"goodbye-cubeide.${key}" is undefined.`);
-  }
-  return config;
+  return vscode.workspace.getConfiguration('goodbye-cubeide').get<T>(key);
 };
 
 export const getToolPath = (pattern: string) => {
   const pluginsDir = () => {
     const cubeIdePath = getConfig<string>('cubeIdePath');
+    if (!cubeIdePath) {
+      throw new Error('"goodbye-cubeide.cubeIdePath" is undefined.');
+    }
+
     const relPath = process.platform === 'darwin' ? '../../Eclipse/plugins' : '../plugins';
+
     return path.resolve(cubeIdePath, relPath);
   };
 
