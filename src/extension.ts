@@ -7,9 +7,10 @@ import { RelativeUri } from './utils/relativeUri';
 import { getToolPath } from './utils/utils';
 
 export const activate = (context: vscode.ExtensionContext) => {
+  context.workspaceState.update('workspace', undefined);
   context.workspaceState.update('isCubeIdeRunning', false);
   context.subscriptions.push(vscode.commands.registerCommand('goodbye-cubeide.initialize', initialize(context)));
-  context.subscriptions.push(vscode.commands.registerCommand('goodbye-cubeide.generate', generate()));
+  context.subscriptions.push(vscode.commands.registerCommand('goodbye-cubeide.generate', generate(context)));
   context.subscriptions.push(vscode.commands.registerCommand('goodbye-cubeide.refresh', refresh(context)));
   context.subscriptions.push(vscode.tasks.registerTaskProvider('cubeide-make', new MakeTaskProvider()));
 

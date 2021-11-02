@@ -1,31 +1,30 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 import { RelativeUri } from '../utils/relativeUri';
-import { getConfig } from '../utils/utils';
+import { getConfig, checkRequiredConfigs } from '../utils/utils';
 
 export const refresh = (context: vscode.ExtensionContext) => {
   return async () => {
-    const workspace = await RelativeUri.workspace();
-
     if (context.workspaceState.get('isCubeIdeRunning')) {
-      vscode.window.showErrorMessage('CubeIDE is already running.');
-      return;
+      return vscode.window.showErrorMessage('CubeIDE is already running.');
     }
 
-    const output = vscode.window.createOutputChannel('Goodbye CubeIDE');
-    output.clear();
-    output.show(true);
-
     vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
-      progress.report({ message: 'Refreshing and building the project...' });
-      context.workspaceState.update('isCubeIdeRunning', true);
-
       try {
-        const cubeIdePath = getConfig<string>('cubeIdePath');
-        if (!cubeIdePath) {
-          throw new Error('"goodbye-cubeide.cubeIdePath" is undefined.');
+        checkRequiredConfigs('cubeIdePath');
+        let workspace = context.workspaceState.get<RelativeUri>('workspace');
+        if (!workspace) {
+          workspace = await RelativeUri.workspace();
         }
-        const cubeIdeWorkspacePath = getConfig<string>('cubeIdeWorkspacePath');
+
+        progress.report({ message: 'Refreshing and building the project...' });
+
+        const output = vscode.window.createOutputChannel('Goodbye CubeIDE');
+        output.clear();
+        output.show(true);
+
+        const cubeIdePath = getConfig('cubeIdePath');
+        const cubeIdeWorkspacePath = getConfig('cubeIdeWorkspacePath');
 
         const args = [
           '-nosplash',
@@ -38,8 +37,9 @@ export const refresh = (context: vscode.ExtensionContext) => {
           args.push('-data', cubeIdeWorkspacePath);
         }
 
-        const headlessBuild = spawn(cubeIdePath, args);
+        context.workspaceState.update('isCubeIdeRunning', true);
 
+        const headlessBuild = spawn(cubeIdePath, args);
         headlessBuild.stdout.on('data', (data) => {
           output.append(data.toString());
         });
@@ -49,7 +49,6 @@ export const refresh = (context: vscode.ExtensionContext) => {
         headlessBuild.on('error', (e) => {
           vscode.window.showErrorMessage(e.message);
         });
-
         await new Promise((resolve) => {
           headlessBuild.stdout.on('end', resolve);
         });

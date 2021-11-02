@@ -1,26 +1,28 @@
 import * as vscode from 'vscode';
 import { RelativeUri } from '../utils/relativeUri';
-import { fs } from '../utils/utils';
+import { fs, checkRequiredConfigs } from '../utils/utils';
 
 export const initialize = (context: vscode.ExtensionContext) => {
   return async () => {
-    const workspace = await RelativeUri.workspace();
-    const extension = new RelativeUri(context.extensionUri);
-
-    if (
-      (await vscode.window.showInformationMessage(
-        'All project settings will be initialized. Are you sure?',
-        { modal: true },
-        ...['Yes']
-      )) !== 'Yes'
-    ) {
-      return;
-    }
-
     vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
-      progress.report({ message: 'Initializing the project...' });
-
       try {
+        checkRequiredConfigs('cubeIdePath');
+
+        if (
+          (await vscode.window.showInformationMessage(
+            'All project settings will be initialized. Are you sure?',
+            { modal: true },
+            ...['Yes']
+          )) !== 'Yes'
+        ) {
+          return;
+        }
+
+        const workspace = await RelativeUri.workspace();
+        const extension = new RelativeUri(context.extensionUri);
+
+        progress.report({ message: 'Initializing the project...' });
+
         for (const file of ['.vscode', '.gitignore']) {
           await fs.copy(extension.join(`assets/${file}`), workspace.join(file), {
             overwrite: true,

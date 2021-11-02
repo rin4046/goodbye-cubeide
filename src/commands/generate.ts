@@ -1,18 +1,21 @@
 import * as vscode from 'vscode';
 import { JSDOM } from 'jsdom';
 import { RelativeUri } from '../utils/relativeUri';
-import { fs, getConfig, getToolPath } from '../utils/utils';
+import { fs, getConfig, checkRequiredConfigs, getToolPath } from '../utils/utils';
 
-export const generate = () => {
+export const generate = (context: vscode.ExtensionContext) => {
   return async () => {
-    const workspace = await RelativeUri.workspace();
-
     vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
-      progress.report({ message: 'Generating "c_cpp_properties.json"...' });
-
       try {
-        const xml = await fs.readFile(workspace.join('.cproject'));
+        checkRequiredConfigs('cubeIdePath');
+        let workspace = context.workspaceState.get<RelativeUri>('workspace');
+        if (!workspace) {
+          workspace = await RelativeUri.workspace();
+        }
 
+        progress.report({ message: 'Generating "c_cpp_properties.json"...' });
+
+        const xml = await fs.readFile(workspace.join('.cproject'));
         const cConfig = new JSDOM(Buffer.from(xml), {
           contentType: 'text/xml',
         }).window.document.querySelector(
@@ -54,8 +57,8 @@ export const generate = () => {
                   compilerPath: getToolPath(
                     'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.*/tools/bin/arm-none-eabi-gcc?(.exe)'
                   ),
-                  cStandard: getConfig<string>('cStandard'),
-                  cppStandard: getConfig<string>('cppStandard'),
+                  cStandard: getConfig('cStandard'),
+                  cppStandard: getConfig('cppStandard'),
                   intelliSenseMode: '${default}',
                 },
               ],
