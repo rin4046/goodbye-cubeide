@@ -1,7 +1,7 @@
 {
   "name": "goodbye-cubeide",
   "displayName": "Goodbye CubeIDE",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "preview": true,
   "description": "An extension for people who don't like CubeIDE.",
   "categories": [
@@ -24,7 +24,6 @@
   "activationEvents": [
     "onCommand:goodbye-cubeide.initialize",
     "onCommand:goodbye-cubeide.generate",
-    "onCommand:goodbye-cubeide.refresh",
     "onCommand:goodbye-cubeide.toolchainPath",
     "onCommand:goodbye-cubeide.stlinkPath",
     "onCommand:goodbye-cubeide.cubeProgPath",
@@ -38,11 +37,7 @@
       },
       {
         "command": "goodbye-cubeide.generate",
-        "title": "Goodbye CubeIDE: Generate \"c_cpp_properties.json\""
-      },
-      {
-        "command": "goodbye-cubeide.refresh",
-        "title": "Goodbye CubeIDE: Refresh and Build Project"
+        "title": "Goodbye CubeIDE: Generate \"c_cpp_properties.json\" and Build Tree"
       }
     ],
     "taskDefinitions": [

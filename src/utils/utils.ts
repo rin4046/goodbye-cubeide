@@ -7,18 +7,9 @@ export const fs = vscode.workspace.fs;
 export const getConfig = (key: string) => {
   const config = vscode.workspace.getConfiguration('goodbye-cubeide').get(key);
   if (typeof config !== 'string') {
-    throw new Error(`"goodbye-cubeide.${key}" is invalid.`);
+    return '';
   }
   return config;
-};
-
-export const checkRequiredConfigs = (...args: string[]) => {
-  for (const key of args) {
-    const config = getConfig(key);
-    if (!config) {
-      throw new Error(`Please set the value of "goodbye-cubeide.${key}"`);
-    }
-  }
 };
 
 export const getToolPath = (pattern: string) => {

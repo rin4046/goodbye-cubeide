@@ -1,39 +1,37 @@
 import * as vscode from 'vscode';
 import { RelativeUri } from '../utils/relativeUri';
-import { fs, checkRequiredConfigs } from '../utils/utils';
+import { fs, getConfig } from '../utils/utils';
 
 export const initialize = (context: vscode.ExtensionContext) => {
   return async () => {
-    vscode.window.withProgress({ location: vscode.ProgressLocation.Notification }, async (progress) => {
-      try {
-        checkRequiredConfigs('cubeIdePath');
+    if (!getConfig('cubeIdePath')) {
+      return vscode.window.showErrorMessage(`Please set the value of "goodbye-cubeide.cubeIdePath"`);
+    }
 
-        if (
-          (await vscode.window.showInformationMessage(
-            'All project settings will be initialized. Are you sure?',
-            { modal: true },
-            ...['Yes']
-          )) !== 'Yes'
-        ) {
-          return;
-        }
+    if (
+      (await vscode.window.showInformationMessage(
+        'All project settings will be initialized. Are you sure?',
+        { modal: true },
+        ...['Yes']
+      )) !== 'Yes'
+    ) {
+      return;
+    }
 
-        const workspace = await RelativeUri.workspace();
-        context.workspaceState.update('workspace', workspace);
-        const extension = new RelativeUri(context.extensionUri);
+    try {
+      const workspace = await RelativeUri.workspace();
+      await context.workspaceState.update('workspace', workspace);
+      const extension = new RelativeUri(context.extensionUri);
 
-        progress.report({ message: 'Initializing the project...' });
-
-        for (const file of ['.vscode', '.gitignore']) {
-          await fs.copy(extension.join(`assets/${file}`), workspace.join(file), {
-            overwrite: true,
-          });
-        }
-      } catch (e: any) {
-        vscode.window.showErrorMessage(e.message);
+      for (const file of ['.vscode', '.gitignore']) {
+        await fs.copy(extension.join(`assets/${file}`), workspace.join(file), {
+          overwrite: true,
+        });
       }
 
-      vscode.commands.executeCommand('goodbye-cubeide.generate');
-    });
+      await vscode.commands.executeCommand('goodbye-cubeide.generate');
+    } catch (e: any) {
+      vscode.window.showErrorMessage(e.message);
+    }
   };
 };
