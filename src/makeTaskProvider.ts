@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
+import { utils } from './utils';
 
 export class MakeTaskProvider implements vscode.TaskProvider {
-  #toolPath: any;
+  #toolPaths: utils.ToolPaths;
 
-  constructor(toolPath: any) {
-    this.#toolPath = toolPath;
+  constructor(toolPaths: utils.ToolPaths) {
+    this.#toolPaths = toolPaths;
   }
 
   provideTasks() {
@@ -12,16 +13,15 @@ export class MakeTaskProvider implements vscode.TaskProvider {
   }
 
   resolveTask(task: vscode.Task) {
-    const pathSeparator = process.platform === 'win32' ? ';' : ':';
-
+    const sep = process.platform === 'win32' ? ';' : ':';
     return new vscode.Task(
       task.definition,
       vscode.TaskScope.Workspace,
       '',
       task.definition.type,
-      new vscode.ShellExecution(`${this.#toolPath.make}`, task.definition.args, {
+      new vscode.ShellExecution(`${this.#toolPaths.makeExec}`, task.definition.args, {
         env: {
-          PATH: `${this.#toolPath.gcc}${pathSeparator}${process.env.PATH}`, // eslint-disable-line
+          PATH: `${this.#toolPaths.gcc}${sep}${process.env.PATH}`, // eslint-disable-line
         },
       })
     );
