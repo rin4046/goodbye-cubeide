@@ -8,12 +8,14 @@ export const generateCommand = async (
   workspace: vscode.WorkspaceFolder,
   toolPaths: utils.ToolPaths
 ) => {
+  // コマンド実行ごとに設定を取得
   const configurations: utils.Configurations = utils.getConfigurations();
   if (!configurations.cubeIdePath) {
     vscode.window.showErrorMessage('"goodbye-cubeide.cubeIdePath" is undefined.');
     return;
   }
 
+  // .cprojectの読み込み
   const xml = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(workspace.uri, '.cproject')).then(
     (data) => data,
     (err) => {
@@ -39,6 +41,7 @@ export const generateCommand = async (
     return;
   }
 
+  // インクルードパスの取得
   const includePaths: string[] = utils
     .getCconfigurationValues(cconfiguration, [
       'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths',
@@ -48,6 +51,7 @@ export const generateCommand = async (
       return '${workspaceFolder}/' + value.replace(/^\.\.\//, '');
     });
 
+  //プリプロセッサ定義の取得
   const defines: string[] = utils.getCconfigurationValues(cconfiguration, [
     'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols',
     'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols',
@@ -70,6 +74,7 @@ export const generateCommand = async (
   };
   /* eslint-enable */
 
+  // c_cpp_properties.jsonの保存
   try {
     await vscode.workspace.fs.writeFile(
       vscode.Uri.joinPath(workspace.uri, '.vscode/c_cpp_properties.json'),
@@ -80,6 +85,9 @@ export const generateCommand = async (
     return;
   }
 
+  vscode.window.showInformationMessage('Generated "c_cpp_properties.json"');
+
+  // CubeIDEが実行中ならコマンドを停止
   if (context.workspaceState.get<boolean>('isCubeIdeRunning')) {
     vscode.window.showErrorMessage('CubeIDE is already running.');
     return;
@@ -103,6 +111,7 @@ export const generateCommand = async (
     output.clear();
     output.show(true);
 
+    // CubeIDEによるビルド
     await context.workspaceState.update('isCubeIdeRunning', true);
 
     const headlessBuild = spawn(configurations.cubeIdePath, args);

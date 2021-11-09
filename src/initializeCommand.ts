@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 export const initializeCommand = async (context: vscode.ExtensionContext, workspace: vscode.WorkspaceFolder) => {
+  // 初期化前に確認
   if (
     (await vscode.window.showInformationMessage(
       'All project settings will be initialized. Are you sure?',
