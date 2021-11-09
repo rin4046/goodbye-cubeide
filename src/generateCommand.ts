@@ -3,13 +3,18 @@ import { spawn } from 'child_process';
 import { JSDOM } from 'jsdom';
 import { utils } from './utils';
 
-export const generateCommand = async (options: utils.Options) => {
-  if (options.context.workspaceState.get<boolean>('isCubeIdeRunning')) {
-    vscode.window.showErrorMessage('CubeIDE is already running.');
+export const generateCommand = async (
+  context: vscode.ExtensionContext,
+  workspace: vscode.WorkspaceFolder,
+  toolPaths: utils.ToolPaths
+) => {
+  const configurations: utils.Configurations = utils.getConfigurations();
+  if (!configurations.cubeIdePath) {
+    vscode.window.showErrorMessage('"goodbye-cubeide.cubeIdePath" is undefined.');
     return;
   }
 
-  const xml = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(options.workspace.uri, '.cproject')).then(
+  const xml = await vscode.workspace.fs.readFile(vscode.Uri.joinPath(workspace.uri, '.cproject')).then(
     (data) => data,
     (err) => {
       vscode.window.showErrorMessage(err.message);
@@ -34,35 +39,19 @@ export const generateCommand = async (options: utils.Options) => {
     return;
   }
 
-  const getCconfigurationValues = (...keys: string[]): string[] => {
-    const values: string[] = [];
-    for (const superClass of keys) {
-      for (const listOptionValue of cconfiguration.querySelectorAll(
-        `option[superClass="${superClass}"] > listOptionValue`
-      )) {
-        const value = listOptionValue.getAttribute('value');
-        if (!value) {
-          continue;
-        }
-        values.push(value.trim());
-      }
-    }
-    return values.filter((value, i, array) => {
-      return array.indexOf(value) === i;
+  const includePaths: string[] = utils
+    .getCconfigurationValues(cconfiguration, [
+      'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths',
+      'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths',
+    ])
+    .map((value) => {
+      return '${workspaceFolder}/' + value.replace(/^\.\.\//, '');
     });
-  };
 
-  const includePaths = getCconfigurationValues(
-    'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths',
-    'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.includepaths'
-  ).map((value) => {
-    return '${workspaceFolder}/' + value.replace(/^\.\.\//, '');
-  });
-
-  const defines = getCconfigurationValues(
+  const defines: string[] = utils.getCconfigurationValues(cconfiguration, [
     'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols',
-    'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols'
-  );
+    'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols',
+  ]);
 
   /* eslint-disable */
   const json = {
@@ -71,9 +60,9 @@ export const generateCommand = async (options: utils.Options) => {
         name: 'STM32',
         includePath: includePaths,
         defines: defines,
-        compilerPath: options.toolPaths.gccExec,
-        cStandard: options.configurations.cStandard,
-        cppStandard: options.configurations.cppStandard,
+        compilerPath: toolPaths.gccExec,
+        cStandard: configurations.cStandard,
+        cppStandard: configurations.cppStandard,
         intelliSenseMode: '${default}',
       },
     ],
@@ -83,11 +72,16 @@ export const generateCommand = async (options: utils.Options) => {
 
   try {
     await vscode.workspace.fs.writeFile(
-      vscode.Uri.joinPath(options.workspace.uri, '.vscode/c_cpp_properties.json'),
+      vscode.Uri.joinPath(workspace.uri, '.vscode/c_cpp_properties.json'),
       new TextEncoder().encode(JSON.stringify(json, null, '  '))
     );
   } catch (err: any) {
     vscode.window.showErrorMessage(err.message);
+    return;
+  }
+
+  if (context.workspaceState.get<boolean>('isCubeIdeRunning')) {
+    vscode.window.showErrorMessage('CubeIDE is already running.');
     return;
   }
 
@@ -101,17 +95,17 @@ export const generateCommand = async (options: utils.Options) => {
       '-cleanBuild',
       projectName,
     ];
-    if (options.configurations.cubeIdeWorkspacePath) {
-      args.push('-data', options.configurations.cubeIdeWorkspacePath);
+    if (configurations.cubeIdeWorkspacePath) {
+      args.push('-data', configurations.cubeIdeWorkspacePath);
     }
 
     const output = vscode.window.createOutputChannel('Goodbye CubeIDE');
     output.clear();
     output.show(true);
 
-    await options.context.workspaceState.update('isCubeIdeRunning', true);
+    await context.workspaceState.update('isCubeIdeRunning', true);
 
-    const headlessBuild = spawn(options.configurations.cubeIdePath, args);
+    const headlessBuild = spawn(configurations.cubeIdePath, args);
     headlessBuild.stdout.on('data', (data) => {
       output.append(data.toString());
     });
@@ -125,6 +119,6 @@ export const generateCommand = async (options: utils.Options) => {
       headlessBuild.stdout.on('end', resolve);
     });
 
-    await options.context.workspaceState.update('isCubeIdeRunning', false);
+    await context.workspaceState.update('isCubeIdeRunning', false);
   });
 };

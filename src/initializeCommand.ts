@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { utils } from './utils';
 
-export const initializeCommand = async (options: utils.Options) => {
+export const initializeCommand = async (context: vscode.ExtensionContext, workspace: vscode.WorkspaceFolder) => {
   if (
     (await vscode.window.showInformationMessage(
       'All project settings will be initialized. Are you sure?',
@@ -15,8 +14,8 @@ export const initializeCommand = async (options: utils.Options) => {
   try {
     for (const file of ['.vscode', '.gitignore']) {
       await vscode.workspace.fs.copy(
-        vscode.Uri.joinPath(options.context.extensionUri, `resources/${file}`),
-        vscode.Uri.joinPath(options.workspace.uri, file),
+        vscode.Uri.joinPath(context.extensionUri, `resources/${file}`),
+        vscode.Uri.joinPath(workspace.uri, file),
         {
           overwrite: true,
         }
