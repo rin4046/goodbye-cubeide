@@ -1,7 +1,7 @@
 {
   "name": "goodbye-cubeide",
   "displayName": "Goodbye CubeIDE",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "preview": true,
   "description": "An extension for people who don't like CubeIDE.",
   "categories": [

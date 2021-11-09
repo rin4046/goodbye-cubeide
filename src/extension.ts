@@ -76,7 +76,6 @@ export const activate = async (context: vscode.ExtensionContext) => {
     vscode.commands.registerCommand('goodbye-cubeide.generate', () => {
       generateCommand(options);
     }),
-    vscode.tasks.registerTaskProvider('cubeide-make', new MakeTaskProvider(toolPaths)),
     vscode.commands.registerCommand('goodbye-cubeide.armToolchainPath', () => {
       return toolPaths.armToolchain;
     }),
@@ -85,6 +84,7 @@ export const activate = async (context: vscode.ExtensionContext) => {
     }),
     vscode.commands.registerCommand('goodbye-cubeide.cubeProgrammerPath', () => {
       return toolPaths.cubeProgrammer;
-    })
+    }),
+    vscode.tasks.registerTaskProvider('cubeide-make', new MakeTaskProvider(toolPaths))
   );
 };

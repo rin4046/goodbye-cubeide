@@ -71,7 +71,7 @@ export const generateCommand = async (options: utils.Options) => {
         name: 'STM32',
         includePath: includePaths,
         defines: defines,
-        compilerPath: options.toolPaths.makeExec,
+        compilerPath: options.toolPaths.gccExec,
         cStandard: options.configurations.cStandard,
         cppStandard: options.configurations.cppStandard,
         intelliSenseMode: '${default}',
