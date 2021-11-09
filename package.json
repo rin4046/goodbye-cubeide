@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://github.com/rin4046/goodbye-cubeide"
   },
-  "icon": "assets/icon.png",
+  "icon": "resources/icon.png",
   "engines": {
     "vscode": "^1.61.0"
   },

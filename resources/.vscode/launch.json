@@ -7,12 +7,12 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "executable": "./Debug/${workspaceFolderBasename}.elf",
-      "armToolchainPath": "${command:goodbye-cubeide.toolchainPath}",
+      "armToolchainPath": "${command:goodbye-cubeide.armToolchainPath}",
       "preLaunchTask": "STM32 Build",
       "runToEntryPoint": "main",
       "servertype": "stlink",
       "serverpath": "${command:goodbye-cubeide.stlinkPath}",
-      "stm32cubeprogrammer": "${command:goodbye-cubeide.cubeProgPath}"
+      "stm32cubeprogrammer": "${command:goodbye-cubeide.cubeProgrammerPath}"
     }
   ]
 }
