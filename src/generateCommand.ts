@@ -57,6 +57,41 @@ export const generateCommand = async (
     'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.definedsymbols',
   ]);
 
+  // stdのバージョンを取得
+  const cStd = (() => {
+    const cstd = cconfiguration
+      .querySelector(
+        `option[superClass="${'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard'}"]`
+      )
+      ?.getAttribute('value')
+      ?.split('.')
+      .slice(-1)[0];
+
+    if (cstd?.startsWith('isoc')) {
+      return cstd.slice(3);
+    } else if (cstd?.startsWith('gnu')) {
+      return cstd;
+    }
+    return 'gnu11';
+  })();
+
+  const cppStd = (() => {
+    const cppstd = cconfiguration
+      .querySelector(
+        `option[superClass="${'com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.languagestandard'}"]`
+      )
+      ?.getAttribute('value')
+      ?.split('.')
+      .slice(-1)[0];
+
+    if (cppstd?.startsWith('isoc')) {
+      return cppstd.slice(3).replace('pp', '++');
+    } else if (cppstd?.startsWith('gnu')) {
+      return cppstd.replace('pp', '++');
+    }
+    return 'gnu++14';
+  })();
+
   /* eslint-disable */
   const json = {
     configurations: [
@@ -65,8 +100,8 @@ export const generateCommand = async (
         includePath: includePaths,
         defines: defines,
         compilerPath: toolPaths.gccExec,
-        cStandard: configurations.cStandard,
-        cppStandard: configurations.cppStandard,
+        cStandard: cStd,
+        cppStandard: cppStd,
         intelliSenseMode: '${default}',
       },
     ],

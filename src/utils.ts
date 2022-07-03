@@ -6,8 +6,8 @@ export module utils {
   export interface Configurations {
     cubeIdePath: string;
     cubeIdeWorkspacePath: string;
-    cStandard: string;
-    cppStandard: string;
+    /* cStandard: string;
+    cppStandard: string; */
   }
 
   export interface ToolPaths {
@@ -20,13 +20,13 @@ export module utils {
   }
 
   export const getConfigurations = (): Configurations => {
-    const { cubeIdePath, cubeIdeWorkspacePath, cStandard, cppStandard } =
+    const { cubeIdePath, cubeIdeWorkspacePath /* , cStandard, cppStandard */ } =
       vscode.workspace.getConfiguration('goodbye-cubeide');
     return {
       cubeIdePath: `${cubeIdePath}`,
       cubeIdeWorkspacePath: `${cubeIdeWorkspacePath}`,
-      cStandard: `${cStandard}`,
-      cppStandard: `${cppStandard}`,
+      /* cStandard: `${cStandard}`,
+      cppStandard: `${cppStandard}`, */
     };
   };
 
