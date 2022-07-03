@@ -1,7 +1,7 @@
 {
   "name": "goodbye-cubeide",
   "displayName": "Goodbye CubeIDE",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "preview": true,
   "description": "An extension for people who don't like CubeIDE.",
   "categories": [
@@ -95,7 +95,7 @@
     "@typescript-eslint/parser": "^4.26.0",
     "esbuild": "^0.13.9",
     "eslint": "^7.27.0",
-    "mocha": "^8.4.0",
+    "mocha": "^10.0.0",
     "patch-package": "^6.4.7",
     "typescript": "^4.3.2",
     "vscode-test": "^1.5.2",
